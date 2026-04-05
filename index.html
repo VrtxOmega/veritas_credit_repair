@@ -204,6 +204,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <button class="tab" onclick="showTab('rebuild')">REBUILD</button>
     <button class="tab" onclick="showTab('intel')">INTEL</button>
     <button class="tab" onclick="showTab('sol')">SOL TABLE</button>
+    <button class="tab" onclick="showTab('addrs')">ADDRESS DB</button>
   </div>
 
   <!-- ════════════════════════════════════════════
@@ -248,7 +249,23 @@ button:disabled{opacity:.4;cursor:not-allowed}
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════
+    <!-- ════════════════════════════════════════════
+       ADDRESS DB
+  ════════════════════════════════════════════ -->
+  <div id="panel-addrs" class="panel">
+    <div class="card">
+      <div class="lbl">CREDITOR MAILING ADDRESS DATABASE</div>
+      <div class="cm mb12" style="font-size:12px">This database automatically learns creditor mailing addresses from AI analysis. You can also manually add or update addresses here to be used in future dispute letters.</div>
+      <div id="addr-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div class="flex gap6 mt12">
+        <input id="new-cred-name" placeholder="Creditor Name" style="flex:1"/>
+        <input id="new-cred-addr" placeholder="Full Mailing Address" style="flex:2"/>
+        <button class="btn-sm btn-teal" onclick="saveCreditorAddr()">Add / Update</button>
+      </div>
+    </div>
+  </div>
+
+<!-- ════════════════════════════════════════════
        REPORTS
   ════════════════════════════════════════════ -->
   <div id="panel-reports" class="panel">
@@ -619,6 +636,7 @@ Return ONLY valid JSON (no markdown fences, no extra text). Structure:
       "id": "i001",
       "type": "collection|late_payment|charge_off|inquiry|error|public_record|other",
       "creditor": "creditor name",
+      "address": "Full mailing address of the creditor if known (street, city, state, zip). IMPORTANT: Retrieve this from the report or provide the known corporate address.",
       "accountNumber": "account number or last 4 digits",
       "amount": "balance amount or N/A",
       "date": "date reported MM/YYYY",
@@ -641,7 +659,13 @@ Return ONLY valid JSON (no markdown fences, no extra text). Structure:
       else throw new Error('Could not parse AI response. Try again.');
     }
     S.analyses[S.curBureau]=parsed;
+    if(parsed.items){
+      parsed.items.forEach(i=>{
+        if(i.creditor && i.address && i.address.length>5 && i.address!=='null') S.creditorDb[i.creditor]=i.address;
+      });
+    }
     saveAll();
+    renderAddrDb();
     renderAnalysis(parsed);
     updateDash();
     updateDots();
@@ -779,8 +803,9 @@ function buildLetter(c,item,bureau,strategy){
   const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   const addr=BUREAU_ADDR[bureau]||bureau+'\nDispute Department';
   const toFurnisher=['623','goodwill','p4d','validation'].includes(strategy);
+  const creditorAddr = item.address || S.creditorDb[item.creditor||''] || '[CREDITOR MAILING ADDRESS — look up at their website or on your statement]';
   const recipient=toFurnisher
-    ? `${item.creditor||'[CREDITOR]'}\nAttn: ${strategy==='goodwill'?'Customer Relations / Goodwill Department':strategy==='p4d'?'Settlement Department':'Compliance / Dispute Department'}\n[CREDITOR MAILING ADDRESS — look up at their website or on your statement]`
+    ? `${item.creditor||'[CREDITOR]'}\nAttn: ${strategy==='goodwill'?'Customer Relations / Goodwill Department':strategy==='p4d'?'Settlement Department':'Compliance / Dispute Department'}\n${creditorAddr}`
     : addr;
   const header=`${c.name||'[YOUR FULL NAME]'}\n${c.addr||'[STREET ADDRESS]'}\n${c.city||'[CITY]'}, ${c.state||'[ST]'} ${c.zip||'[ZIP]'}\n${c.phone||'[PHONE]'}\nDate of Birth: ${c.dob||'[MM/DD/YYYY]'}${c.ssn?' · SSN Last 4: '+c.ssn:''}\n\n${today}\n\n${recipient}\n\nVia Certified Mail — Return Receipt Requested\n\n`;
   const ID=`    Creditor / Furnisher:  ${item.creditor||'[CREDITOR]'}\n    Account Number:        ${item.accountNumber||'[ACCOUNT #]'}\n    Balance / Amount:      ${item.amount||'N/A'}\n    Date Reported:         ${item.date||'N/A'}${item.dofd?'\n    Date of First Delinquency (DOFD): '+item.dofd:''}`;
@@ -1023,6 +1048,43 @@ function toggleColl(id){
   const open=body.classList.contains('open');
   body.classList.toggle('open',!open);
   arr.textContent=open?'▼':'▲';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ADDRESS DB
+// ═══════════════════════════════════════════════════════════════════
+function renderAddrDb(){
+  const el = document.getElementById('addr-list');
+  if(!el)return;
+  const keys = Object.keys(S.creditorDb).sort();
+  if(keys.length === 0){
+    el.innerHTML = '<div class="cm italic" style="font-size:12px">Database is currently empty. Addresses will populate here automatically when the AI analyzes your reports.</div>';
+    return;
+  }
+  el.innerHTML = keys.map(k => `
+    <div class="flex gap8 ac" style="padding:6px 0;border-bottom:1px solid var(--b2)">
+      <div style="flex:1;font-weight:600;color:var(--tx1)">${escH(k)}</div>
+      <div style="flex:2;color:var(--tx2);font-size:12px">${escH(S.creditorDb[k])}</div>
+      <button class="btn-sm" style="color:var(--red);border-color:transparent" onclick="delCreditorAddr('${k.replace(/'/g,"\\'")}')">Delete</button>
+    </div>
+  `).join('');
+}
+
+function saveCreditorAddr(){
+  const name = document.getElementById('new-cred-name').value.trim();
+  const addr = document.getElementById('new-cred-addr').value.trim();
+  if(!name || !addr) return;
+  S.creditorDb[name] = addr;
+  ls.set('creditorDb', S.creditorDb);
+  document.getElementById('new-cred-name').value = '';
+  document.getElementById('new-cred-addr').value = '';
+  renderAddrDb();
+}
+
+function delCreditorAddr(name){
+  delete S.creditorDb[name];
+  ls.set('creditorDb', S.creditorDb);
+  renderAddrDb();
 }
 
 // ═══════════════════════════════════════════════════════════════════
