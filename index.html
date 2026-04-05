@@ -504,7 +504,8 @@ const S = {
   disputes: [],
   curBureau: 'Equifax',
   curLetter: '',
-  filter: 'All'
+  filter: 'All',
+  creditorDb: {}
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -519,12 +520,14 @@ function saveAll(){
   ls.set('consumer',S.consumer);
   ls.set('disputes',S.disputes);
   ls.set('analyses',S.analyses);
+  ls.set('creditorDb',S.creditorDb);
 }
 
 function loadAll(){
   const c=ls.get('consumer');if(c)Object.assign(S.consumer,c);
   const d=ls.get('disputes');if(d)S.disputes=d;
   const a=ls.get('analyses');if(a)S.analyses=a;
+  const cdb=ls.get('creditorDb');if(cdb)S.creditorDb=cdb;
   const rb=ls.get('rebuild');if(rb){const el=document.getElementById('rebuild-out');if(el){el.textContent=rb;el.style.display='block';}}
   const it=ls.get('intel');if(it){const el=document.getElementById('intel-out');if(el){el.textContent=it;el.style.display='block';}}
   syncConsumerFields();
