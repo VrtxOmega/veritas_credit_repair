@@ -14,6 +14,28 @@
   --gbg:#052e16;--rbg:#2d0909;--ybg:#1c1500;--bbg:#0a1628;
 }
 body{background:var(--bg);color:var(--tx);font-family:'Inter', sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+/* ── Background Watermark ── */
+body::after {
+  content: "\03A9"; /* Omega symbol */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 110vh; /* Scaled to screen height */
+  line-height: 1;
+  font-family: "Times New Roman", serif;
+  color: rgba(212, 175, 55, 0.025); /* Faint Veritas Gold */
+  z-index: -10;
+  pointer-events: none;
+  animation: breathe 8s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.02); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+}
+
 #app{max-width:1640px;width:95%;margin:0 auto;padding:30px 20px 80px}
 
 /* ── Header ── */
