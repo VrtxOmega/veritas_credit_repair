@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERITAS Credit Repair AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#101010;--bg3:#161616;--bg4:#1c1c1c;
+  --b1:#222;--b2:#2c2c2c;--b3:#383838;
+  --tx:#e0e0e0;--tx2:#888;--tx3:#444;
+  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#60a5fa;--teal:#D4AF37;--purple:#a78bfa;
+  --gbg:#052e16;--rbg:#2d0909;--ybg:#1c1500;--bbg:#0a1628;
+}
+body{background:var(--bg);color:var(--tx);font-family:'Inter', sans-serif;font-size:13px;line-height:1.55;min-height:100vh}
+#app{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+
+/* ── Header ── */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--b1);padding-bottom:14px;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.hdr-left{}
+.hdr-title{font-size:16px;font-weight:700;letter-spacing:.12em;color:var(--teal)}
+.hdr-sub{font-size:10px;color:var(--tx3);margin-top:3px;letter-spacing:.05em}
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.dot{font-size:10px;padding:3px 9px;border-radius:4px;border:1px solid var(--b2);color:var(--tx3);letter-spacing:.04em;transition:all .2s}
+.dot.on{color:var(--green);border-color:var(--green)}
+.key-status{font-size:10px;padding:3px 9px;border-radius:4px;border:1px solid var(--b2);color:var(--tx3);letter-spacing:.03em}
+.key-status.set{color:var(--teal);border-color:var(--teal)}
+
+/* ── Tabs ── */
+.tabs{display:flex;border-bottom:1px solid var(--b1);margin-bottom:20px;overflow-x:auto}
+.tab{padding:9px 14px;cursor:pointer;border:none;background:transparent;color:var(--tx3);font-family:'Inter', sans-serif;font-size:11px;letter-spacing:.07em;font-weight:700;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--tx2)}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* ── Panels ── */
+.panel{display:none}.panel.on{display:block}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.lbl{font-size:10px;color:var(--tx3);letter-spacing:.1em;margin-bottom:7px;font-weight:700;text-transform:uppercase}
+
+/* ── Grid ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.gauto{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+
+/* ── Stats ── */
+.stat{background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:12px 14px}
+.stat-v{font-size:32px;font-weight:700;margin-top:4px}
+
+/* ── Colors ── */
+.cg{color:var(--green)}.cr{color:var(--red)}.cy{color:var(--yellow)}.cb{color:var(--blue)}.ct{color:var(--teal)}.cp{color:var(--purple)}.cm{color:var(--tx2)}
+
+/* ── Inputs ── */
+input,select,textarea{background:var(--bg3);border:1px solid var(--b2);border-radius:6px;color:var(--tx);font-family:'Courier New',monospace;font-size:12px;padding:7px 10px;width:100%;outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--b3)}
+select option{background:var(--bg3)}
+textarea{resize:vertical;line-height:1.65}
+
+/* ── Buttons ── */
+button{cursor:pointer;font-family:'Inter', sans-serif;font-size:12px;border-radius:6px;border:1px solid var(--b2);background:var(--bg2);color:var(--tx2);padding:7px 13px;transition:all .15s;letter-spacing:.03em}
+button:hover:not(:disabled){background:var(--bg3);border-color:var(--b3);color:var(--tx)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.btn-full{width:100%;padding:11px;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--tx)}
+.btn-teal{border-color:var(--teal);color:var(--teal)}
+.btn-teal:hover:not(:disabled){background:rgba(212,175,55,.08)!important;border-color:var(--teal)!important;color:var(--teal)!important}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-red{border-color:var(--red);color:var(--red)}
+.btn-red:hover:not(:disabled){background:rgba(239,68,68,.08)!important;border-color:var(--red)!important;color:var(--red)!important}
+
+/* ── Badges ── */
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:.04em;border:1px solid}
+.bg{color:var(--green);background:var(--gbg);border-color:var(--green)}
+.br{color:var(--red);background:var(--rbg);border-color:var(--red)}
+.by{color:var(--yellow);background:var(--ybg);border-color:var(--yellow)}
+.bb{color:var(--blue);background:var(--bbg);border-color:var(--blue)}
+.bm{color:var(--tx2);background:var(--bg3);border-color:var(--b2)}
+.bt{color:var(--teal);background:rgba(212,175,55,.08);border-color:var(--teal)}
+
+/* ── Item rows ── */
+.item{background:var(--bg2);border:1px solid var(--b1);border-left:3px solid var(--b2);border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:border-color .2s}
+.item.critical{border-left-color:var(--red)}
+.item.high{border-left-color:var(--yellow)}
+.item.medium{border-left-color:var(--blue)}
+.item.low{border-left-color:var(--tx3)}
+.item.resolved{border-left-color:var(--green)}
+.item-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
+.item-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:11px;color:var(--tx2);margin-bottom:6px}
+.item-reason{font-size:12px;color:var(--tx);margin-bottom:8px;line-height:1.5}
+.item-note{font-size:11px;color:var(--tx3);font-style:italic;margin-bottom:8px}
+.item-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* ── Letter box ── */
+.letter-box{background:var(--bg3);border:1px solid var(--b2);border-radius:6px;padding:13px;font-size:11px;white-space:pre-wrap;max-height:420px;overflow-y:auto;line-height:1.75;color:var(--tx);font-family:'Courier New',monospace}
+
+/* ── AI output ── */
+.ai-out{background:var(--bg3);border:1px solid var(--b2);border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.8;white-space:pre-wrap;color:var(--tx);max-height:600px;overflow-y:auto}
+
+/* ── Collapsibles ── */
+.coll-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:12px 14px;border:1px solid var(--b1);border-radius:8px;background:var(--bg2);font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:8px;transition:background .15s;color:var(--tx2)}
+.coll-hdr:hover{background:var(--bg3);color:var(--tx)}
+.coll-body{display:none;padding:0 2px 8px}.coll-body.open{display:block}
+
+/* ── Loophole cards ── */
+.loop{background:var(--bg2);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.loop-name{font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:5px}
+.loop-desc{font-size:11px;color:var(--tx2);line-height:1.65}
+
+/* ── SOL table ── */
+.sol-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:0}
+.sol-row{display:flex;justify-content:space-between;padding:5px 7px;border-bottom:1px solid var(--b1);font-size:11px}
+.sol-row:hover{background:var(--bg3)}
+
+/* ── Progress bar ── */
+.pbar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:8px}
+.pfill{height:100%;border-radius:3px;transition:width .4s,background .4s}
+
+/* ── Modal overlay ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--b2);border-radius:10px;padding:28px;max-width:480px;width:90%;position:relative}
+.modal-title{font-size:14px;font-weight:700;color:var(--teal);letter-spacing:.08em;margin-bottom:8px}
+.modal-sub{font-size:11px;color:var(--tx2);margin-bottom:18px;line-height:1.7}
+
+/* ── Notice bars ── */
+.notice{padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;border:1px solid}
+.notice.warn{color:var(--yellow);background:var(--ybg);border-color:var(--yellow)}
+.notice.info{color:var(--blue);background:var(--bbg);border-color:var(--blue)}
+.notice.ok{color:var(--green);background:var(--gbg);border-color:var(--green)}
+.notice.err{color:var(--red);background:var(--rbg);border-color:var(--red)}
+
+/* ── Spinner ── */
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--b3);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-bar{text-align:center;padding:20px;color:var(--yellow);font-size:12px}
+
+/* ── Consumer form ── */
+.c-field{margin-bottom:0}
+.c-lbl{font-size:10px;color:var(--tx3);margin-bottom:3px;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── Manual add form ── */
+.add-form{background:var(--bg3);border:1px solid var(--b2);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+
+/* ── Util ── */
+.flex{display:flex}.gap8{gap:8px}.gap6{gap:6px}.gap12{gap:12px}.ac{align-items:center}.jsb{justify-content:space-between}.fw{flex-wrap:wrap}.f1{flex:1}.nowrap{white-space:nowrap}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.sep{border:none;border-top:1px solid var(--b1);margin:14px 0}
+.tr{text-align:right}.bold{font-weight:700}.italic{font-style:italic}
+.scroll{max-height:560px;overflow-y:auto}
+
+@media(max-width:640px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+  .gauto{grid-template-columns:1fr 1fr}
+  .tab{padding:8px 10px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── API KEY EMBEDDED ── -->
+
+  <!-- ── HEADER ── -->
+  <div class="hdr" style="align-items:center;">
+    <div class="hdr-left" style="display:flex;align-items:center;gap:16px;">
+      <img src="veritas_shield.jpg" alt="VERITAS Shield" style="height:60px;width:auto;border-radius:4px;"/>
+      <div>
+        <div class="hdr-title" style="color:#D4AF37;font-size:20px;">VERITAS CREDIT REPAIR AI</div>
+        <div class="hdr-sub" style="margin-top:6px;">
+          <img src="veritas_motto.jpg" alt="Examina omnia, venerare nihil, pro te cogita" style="height:24px;width:auto;opacity:0.95;margin-bottom:4px;border-radius:2px;"/><br>
+          <span style="font-size:11px;color:var(--tx2);">FCRA · FDCPA · CFPB · ALL LEGAL LEVERAGE · POWERED BY GEMINI</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap6 ac fw" style="padding-top:6px;">
+      <div class="dot" id="dot-eq">EQ ○</div>
+      <div class="dot" id="dot-ex">EX ○</div>
+      <div class="dot" id="dot-tu">TU ○</div>
+    </div>
+  </div>
+
+  <!-- ── TABS ── -->
+  <div class="tabs">
+    <button class="tab on" onclick="showTab('dash')">DASHBOARD</button>
+    <button class="tab" onclick="showTab('reports')">REPORTS</button>
+    <button class="tab" onclick="showTab('disputes')" id="tab-disp">DISPUTES</button>
+    <button class="tab" onclick="showTab('manual')">ADD ITEM</button>
+    <button class="tab" onclick="showTab('rebuild')">REBUILD</button>
+    <button class="tab" onclick="showTab('intel')">INTEL</button>
+    <button class="tab" onclick="showTab('sol')">SOL TABLE</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       DASHBOARD
+  ════════════════════════════════════════════ -->
+  <div id="panel-dash" class="panel on">
+    <div class="g4">
+      <div class="stat"><div class="lbl">Items Found</div><div class="stat-v cy" id="s-items">0</div></div>
+      <div class="stat"><div class="lbl">Letters Made</div><div class="stat-v cb" id="s-letters">0</div></div>
+      <div class="stat"><div class="lbl">Active</div><div class="stat-v cr" id="s-active">0</div></div>
+      <div class="stat"><div class="lbl">Resolved</div><div class="stat-v cg" id="s-resolved">0</div></div>
+    </div>
+
+    <div class="g3">
+      <div class="card"><div class="lbl" style="color:var(--red)">EQUIFAX</div><div id="bs-eq" class="cm" style="font-size:12px">Not analyzed</div><div class="pbar mt8"><div class="pfill" id="pb-eq" style="width:0%;background:var(--red)"></div></div></div>
+      <div class="card"><div class="lbl" style="color:var(--blue)">EXPERIAN</div><div id="bs-ex" class="cm" style="font-size:12px">Not analyzed</div><div class="pbar mt8"><div class="pfill" id="pb-ex" style="width:0%;background:var(--blue)"></div></div></div>
+      <div class="card"><div class="lbl" style="color:var(--green)">TRANSUNION</div><div id="bs-tu" class="cm" style="font-size:12px">Not analyzed</div><div class="pbar mt8"><div class="pfill" id="pb-tu" style="width:0%;background:var(--green)"></div></div></div>
+    </div>
+
+    <div class="card mb12">
+      <div class="lbl">KEY LEGAL LEVERS — ALWAYS ACTIVE</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+        <div class="flex gap8"><span class="cy">▶</span><div><span class="bold">§611 30-Day Deletion Trap</span> — <span class="cm">Bureau fails to investigate within 30 days of certified mail receipt = item MUST delete. Track every return receipt date.</span></div></div>
+        <div class="flex gap8"><span class="cy">▶</span><div><span class="bold">§605 DOFD Controls the Clock</span> — <span class="cm">7-yr limit runs from Date of First Delinquency. NOT charge-off date, NOT sale date. Re-aging is its own FCRA violation.</span></div></div>
+        <div class="flex gap8"><span class="cy">▶</span><div><span class="bold">FDCPA §809 Validation Halt</span> — <span class="cm">Collectors must CEASE ALL activity including CRA reporting until debt fully validated. $1,000/violation.</span></div></div>
+        <div class="flex gap8"><span class="cy">▶</span><div><span class="bold">The 1-2 Punch</span> — <span class="cm">Dispute with bureau → furnisher "verifies" without real investigation → directly dispute furnisher under §623(b) for failure to investigate.</span></div></div>
+        <div class="flex gap8"><span class="cy">▶</span><div><span class="bold">CFPB Complaint Acceleration</span> — <span class="cm">File at consumerfinance.gov simultaneously with every dispute. Regulatory pressure dramatically speeds resolution.</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="lbl">HOW TO USE THIS TOOL</div>
+      <ol style="padding-left:18px;color:var(--tx2);font-size:12px;line-height:2.2;margin-top:6px">
+        <li>Go to <strong class="ct">REPORTS</strong> → fill in your info → select bureau → paste report text → Analyze</li>
+        <li>Or go to <strong class="ct">ADD ITEM</strong> to manually enter a negative item</li>
+        <li>Click <strong class="ct">Generate Letter →</strong> on any disputable item</li>
+        <li>Go to <strong class="ct">DISPUTES</strong> → copy letters → send via certified mail w/ return receipt</li>
+        <li>Update dispute status as responses arrive — track the 30-day clock</li>
+        <li>Go to <strong class="ct">REBUILD</strong> for personalized AI score-building strategy</li>
+        <li>Go to <strong class="ct">INTEL</strong> for AI-powered current law updates</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       REPORTS
+  ════════════════════════════════════════════ -->
+  <div id="panel-reports" class="panel">
+    <!-- Consumer info -->
+    <div class="card mb12">
+      <div class="lbl">YOUR INFO — USED IN ALL DISPUTE LETTERS</div>
+      <div class="gauto mt8">
+        <div class="c-field"><div class="c-lbl">Full Name</div><input id="c-name" placeholder="RJ Lopez"/></div>
+        <div class="c-field"><div class="c-lbl">Street Address</div><input id="c-addr" placeholder="123 Main St"/></div>
+        <div class="c-field"><div class="c-lbl">City</div><input id="c-city" placeholder="Bethalto"/></div>
+        <div class="c-field"><div class="c-lbl">State</div><input id="c-state" placeholder="IL" value="IL"/></div>
+        <div class="c-field"><div class="c-lbl">ZIP</div><input id="c-zip" placeholder="62010"/></div>
+        <div class="c-field"><div class="c-lbl">Phone</div><input id="c-phone" placeholder="(618) 555-0100"/></div>
+        <div class="c-field"><div class="c-lbl">Date of Birth</div><input id="c-dob" placeholder="MM/DD/YYYY"/></div>
+        <div class="c-field"><div class="c-lbl">Last 4 SSN (optional)</div><input id="c-ssn" placeholder="XXXX" maxlength="4"/></div>
+      </div>
+    </div>
+
+    <!-- Bureau selector -->
+    <div class="flex gap6 mb12">
+      <button onclick="selBureau('Equifax')" id="bbtn-Equifax" class="btn-teal" style="flex:1;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.06em">EQUIFAX</button>
+      <button onclick="selBureau('Experian')" id="bbtn-Experian" style="flex:1;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.06em">EXPERIAN</button>
+      <button onclick="selBureau('TransUnion')" id="bbtn-TransUnion" style="flex:1;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.06em">TRANSUNION</button>
+    </div>
+
+    <div class="lbl mb8" id="report-lbl">PASTE EQUIFAX REPORT TEXT BELOW</div>
+    <textarea id="report-txt" rows="11" placeholder="Paste your full credit report text here. Include all account entries, inquiry listings, public records, and personal info sections. The more complete the text, the better the AI analysis. You can copy-paste from annualcreditreport.com or your bureau's site."></textarea>
+    <button class="btn-full btn-teal mt8 mb12" id="btn-analyze" onclick="analyzeReport()">⚡ ANALYZE REPORT — IDENTIFY DISPUTABLE ITEMS</button>
+    <div id="analyze-status" style="display:none" class="loading-bar"><span class="spin"></span>Analyzing with Gemini AI... this may take 20–40 seconds</div>
+
+    <div id="analyze-summary" style="display:none" class="card mb8">
+      <div class="lbl">AI ASSESSMENT</div>
+      <div id="sum-text" class="cm italic mt8" style="font-size:12px;line-height:1.7"></div>
+    </div>
+
+    <div id="items-section" style="display:none">
+      <div class="lbl mb8" id="items-lbl">ITEMS FOUND</div>
+      <div id="items-list"></div>
+    </div>
+
+    <div id="letter-preview" style="display:none;margin-top:14px">
+      <div class="flex jsb ac mb8">
+        <div class="lbl cg" style="margin-bottom:0">✓ LETTER GENERATED — ADDED TO DISPUTES TAB</div>
+        <div class="flex gap6">
+          <button class="btn-sm" onclick="copyCurrentLetter()">Copy</button>
+          <button class="btn-sm" onclick="document.getElementById('letter-preview').style.display='none'">Hide</button>
+        </div>
+      </div>
+      <div class="letter-box" id="lp-text"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       ADD ITEM MANUALLY
+  ════════════════════════════════════════════ -->
+  <div id="panel-manual" class="panel">
+    <div class="notice info">Use this tab to add items you identified yourself without AI analysis — useful when the report text won't paste cleanly.</div>
+    <div class="card">
+      <div class="lbl">MANUALLY ADD A NEGATIVE ITEM</div>
+      <div class="gauto mt8 mb12">
+        <div class="c-field"><div class="c-lbl">Bureau</div>
+          <select id="m-bureau">
+            <option>Equifax</option><option>Experian</option><option>TransUnion</option>
+          </select>
+        </div>
+        <div class="c-field"><div class="c-lbl">Creditor / Collection Agency</div><input id="m-creditor" placeholder="Capital One, LVNV Funding, etc."/></div>
+        <div class="c-field"><div class="c-lbl">Account # (last 4 OK)</div><input id="m-acct" placeholder="XXXX"/></div>
+        <div class="c-field"><div class="c-lbl">Amount</div><input id="m-amount" placeholder="$1,500"/></div>
+        <div class="c-field"><div class="c-lbl">Date Reported</div><input id="m-date" placeholder="MM/YYYY"/></div>
+        <div class="c-field"><div class="c-lbl">Date of First Delinquency</div><input id="m-dofd" placeholder="MM/YYYY or Unknown"/></div>
+        <div class="c-field"><div class="c-lbl">Item Type</div>
+          <select id="m-type">
+            <option value="collection">Collection</option>
+            <option value="charge_off">Charge-Off</option>
+            <option value="late_payment">Late Payment</option>
+            <option value="inquiry">Unauthorized Inquiry</option>
+            <option value="public_record">Public Record</option>
+            <option value="error">Error / Not Mine</option>
+          </select>
+        </div>
+        <div class="c-field"><div class="c-lbl">Severity</div>
+          <select id="m-sev">
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="c-lbl mb8">Dispute Reason (describe why it's wrong or challengeable)</div>
+      <textarea id="m-reason" rows="3" placeholder="e.g. This debt is over 7 years old from DOFD and is obsolete. / This is not my account. / This inquiry was not authorized." style="margin-bottom:12px"></textarea>
+      <div class="c-lbl mb8">Recommended Strategy</div>
+      <select id="m-strat" style="margin-bottom:12px">
+        <option value="611">§611 — Reinvestigation Demand (best default)</option>
+        <option value="609">§609 — Method of Verification Request</option>
+        <option value="623">§623 — Direct Furnisher Dispute</option>
+        <option value="goodwill">Goodwill Deletion Request</option>
+        <option value="validation">FDCPA §809 — Debt Validation</option>
+        <option value="inquiry">§604 — Permissible Purpose Challenge</option>
+        <option value="obsolete">§605 — Obsolescence / Time-Barred</option>
+        <option value="p4d">Pay-for-Delete Offer</option>
+      </select>
+      <button class="btn-full btn-teal" onclick="addManualItem()">ADD ITEM &amp; GENERATE LETTER</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       DISPUTES
+  ════════════════════════════════════════════ -->
+  <div id="panel-disputes" class="panel">
+    <div class="flex gap6 mb12 fw">
+      <button class="btn-sm" onclick="setFilter('All')" id="df-All" style="font-weight:700">All</button>
+      <button class="btn-sm" onclick="setFilter('Equifax')" id="df-Equifax">Equifax</button>
+      <button class="btn-sm" onclick="setFilter('Experian')" id="df-Experian">Experian</button>
+      <button class="btn-sm" onclick="setFilter('TransUnion')" id="df-TransUnion">TransUnion</button>
+      <button class="btn-sm" onclick="setFilter('Draft')" id="df-Draft">Draft</button>
+      <button class="btn-sm" onclick="setFilter('Sent')" id="df-Sent">Sent</button>
+      <button class="btn-sm" onclick="setFilter('In Investigation')" id="df-In Investigation">Investigating</button>
+      <button class="btn-sm" onclick="setFilter('Resolved')" id="df-Resolved">Resolved</button>
+    </div>
+    <div id="disp-list"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       REBUILD
+  ════════════════════════════════════════════ -->
+  <div id="panel-rebuild" class="panel">
+    <div class="card mb12">
+      <div class="lbl">UTILIZATION CALCULATOR — TARGET ≤10% FOR MAX SCORE</div>
+      <div class="flex gap12 ac fw mt8">
+        <div style="flex:1;min-width:100px">
+          <div class="c-lbl mb8">Total Balance ($)</div>
+          <input type="number" id="u-bal" placeholder="0" min="0" oninput="calcUtil()"/>
+        </div>
+        <div style="flex:1;min-width:100px">
+          <div class="c-lbl mb8">Total Credit Limit ($)</div>
+          <input type="number" id="u-lim" placeholder="0" min="0" oninput="calcUtil()"/>
+        </div>
+        <div style="text-align:center;min-width:80px">
+          <div class="c-lbl">Utilization</div>
+          <div id="u-pct" style="font-size:36px;font-weight:700;color:var(--tx2);font-family:'Courier New',monospace">—</div>
+          <div id="u-label" style="font-size:10px;color:var(--tx2)"></div>
+        </div>
+      </div>
+      <div id="u-bar" style="display:none">
+        <div class="pbar mt8"><div id="u-fill" class="pfill" style="width:0%;background:var(--green)"></div></div>
+        <div id="u-tip" style="font-size:11px;color:var(--yellow);margin-top:7px;font-style:italic"></div>
+      </div>
+    </div>
+
+    <div class="card mb12">
+      <div class="lbl">QUICK SCORE FACTORS (FICO)</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <div class="flex jsb"><span class="cm" style="font-size:12px">Payment History</span><span class="cy bold">35%</span></div>
+        <div class="flex jsb"><span class="cm" style="font-size:12px">Amounts Owed (Utilization)</span><span class="cy bold">30%</span></div>
+        <div class="flex jsb"><span class="cm" style="font-size:12px">Length of Credit History</span><span class="cb bold">15%</span></div>
+        <div class="flex jsb"><span class="cm" style="font-size:12px">Credit Mix</span><span class="cm bold">10%</span></div>
+        <div class="flex jsb"><span class="cm" style="font-size:12px">New Credit (Inquiries)</span><span class="cm bold">10%</span></div>
+      </div>
+    </div>
+
+    <button class="btn-full btn-teal mb12" id="btn-rebuild" onclick="genRebuild()">🚀 GENERATE AI REBUILD STRATEGY — PERSONALIZED PLAN</button>
+    <div id="rebuild-status" style="display:none" class="loading-bar"><span class="spin"></span>Generating your personalized rebuild plan with Gemini...</div>
+    <div id="rebuild-out" style="display:none" class="ai-out"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       INTEL
+  ════════════════════════════════════════════ -->
+  <div id="panel-intel" class="panel">
+    <div class="notice info">Gemini will search its training knowledge for current FCRA/FDCPA/CFPB intelligence. For verified live results, also check: <strong>consumerfinance.gov</strong>, <strong>ftc.gov</strong>, and <strong>nclc.org</strong>.</div>
+    <button class="btn-full btn-teal mb12" id="btn-intel" onclick="fetchIntel()">🌐 GENERATE CURRENT LAW INTELLIGENCE BRIEFING</button>
+    <div id="intel-status" style="display:none" class="loading-bar"><span class="spin"></span>Generating law intelligence briefing...</div>
+    <div id="intel-out" style="display:none" class="ai-out mb16"></div>
+
+    <div class="coll-hdr" onclick="toggleColl('loops')">
+      <span>⚡ ACTIVE LEGAL LOOPHOLE LIBRARY — 12 STRATEGIES</span><span id="arr-loops">▼</span>
+    </div>
+    <div class="coll-body" id="body-loops"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SOL TABLE
+  ════════════════════════════════════════════ -->
+  <div id="panel-sol" class="panel">
+    <div class="notice warn">⚠ After the SOL expires, collectors CANNOT sue you — but you MUST raise the defense in court. Paying, making a partial payment, or acknowledging the debt in writing can RESTART the clock in many states. NEVER acknowledge or pay a time-barred debt without legal advice.</div>
+    <div class="card mt12">
+      <div class="lbl mb8">STATUTE OF LIMITATIONS — ALL 50 STATES (Written Contracts / Credit Cards)</div>
+      <div class="sol-grid" id="sol-tbl"></div>
+    </div>
+    <div class="card mt12">
+      <div class="lbl mb8">FCRA REPORTING LIMITS</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+        <div class="flex gap8"><span class="ct bold">7 years</span><span class="cm">— Most negative items (from DOFD): late payments, collections, charge-offs, repossessions, foreclosures, Chapter 13 bankruptcy</span></div>
+        <div class="flex gap8"><span class="ct bold">10 years</span><span class="cm">— Chapter 7 bankruptcy</span></div>
+        <div class="flex gap8"><span class="ct bold">7 years</span><span class="cm">— Paid tax liens (from date paid)</span></div>
+        <div class="flex gap8"><span class="ct bold">2 years</span><span class="cm">— Hard inquiries (must auto-delete)</span></div>
+        <div class="flex gap8"><span class="ct bold">Indefinite</span><span class="cm">— Credit applications &gt;$150k, life insurance &gt;$150k, employment &gt;$75k/yr (no limit by FCRA)</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════
+const S = {
+  consumer: {name:'',addr:'',city:'',state:'IL',zip:'',phone:'',dob:'',ssn:''},
+  analyses: {Equifax:null, Experian:null, TransUnion:null},
+  disputes: [],
+  curBureau: 'Equifax',
+  curLetter: '',
+  filter: 'All'
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// PERSIST
+// ═══════════════════════════════════════════════════════════════════
+const ls = {
+  set:(k,v)=>{try{localStorage.setItem('vrtx:'+k,JSON.stringify(v))}catch(e){}},
+  get:(k)=>{try{const v=localStorage.getItem('vrtx:'+k);return v?JSON.parse(v):null}catch(e){return null}}
+};
+
+function saveAll(){
+  ls.set('consumer',S.consumer);
+  ls.set('disputes',S.disputes);
+  ls.set('analyses',S.analyses);
+}
+
+function loadAll(){
+  const c=ls.get('consumer');if(c)Object.assign(S.consumer,c);
+  const d=ls.get('disputes');if(d)S.disputes=d;
+  const a=ls.get('analyses');if(a)S.analyses=a;
+  const rb=ls.get('rebuild');if(rb){const el=document.getElementById('rebuild-out');if(el){el.textContent=rb;el.style.display='block';}}
+  const it=ls.get('intel');if(it){const el=document.getElementById('intel-out');if(el){el.textContent=it;el.style.display='block';}}
+  syncConsumerFields();
+  updateDash();
+  renderDisputes();
+  updateDots();
+  checkKey();
+}
+
+function syncConsumerFields(){
+  const map={name:'c-name',addr:'c-addr',city:'c-city',state:'c-state',zip:'c-zip',phone:'c-phone',dob:'c-dob',ssn:'c-ssn'};
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.value=S.consumer[k]||'';});
+}
+
+function readConsumer(){
+  S.consumer.name=v('c-name');S.consumer.addr=v('c-addr');S.consumer.city=v('c-city');
+  S.consumer.state=v('c-state');S.consumer.zip=v('c-zip');S.consumer.phone=v('c-phone');
+  S.consumer.dob=v('c-dob');S.consumer.ssn=v('c-ssn');
+  ls.set('consumer',S.consumer);
+}
+
+function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+// ═══════════════════════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════════════════════
+function getKey(){return ''; /* PASTE YOUR API KEY HERE */}
+function saveKey(){}
+function checkKey(){}
+function showKeyModal(){}
+
+// ═══════════════════════════════════════════════════════════════════
+// GEMINI API
+// ═══════════════════════════════════════════════════════════════════
+const SYSTEM_INST = `You are VERITAS Credit Repair AI — a master credit repair specialist with complete knowledge of all U.S. consumer protection laws as of April 2026. LEGAL ARSENAL:
+
+FCRA (15 U.S.C. § 1681): §604 Permissible purposes; §605 Obsolescence (7yr negatives, 10yr Ch.7, DOFD controls clock); §609 Right to verification method disclosure; §611 Reinvestigation 30-day deadline — unverifiable MUST delete; §616-617 Civil liability $100-$1,000/violation + actual damages + attorney fees; §623 Furnisher accuracy duties.
+
+FDCPA (15 U.S.C. § 1692): §809 Debt validation — must cease ALL activity including CRA reporting until validated; §812 $1,000/violation; Reg F 2021 — must disclose time-barred debt.
+
+STRATEGIES: 609 (demand verification method), 611 (reinvestigation demand), 623 (direct furnisher), goodwill (deletion request for isolated accurate negatives), validation (FDCPA §809 collector), inquiry (§604 permissible purpose), obsolete (§605 time-barred), p4d (pay-for-delete).
+
+You operate under rigorous verification discipline: examine everything, verify before asserting, protect consumer rights at every step.`;
+
+async function gemini(prompt, jsonMode=false){
+  const key=getKey();
+  const model='gemini-2.5-pro';
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+  const body={
+    system_instruction:{parts:[{text:SYSTEM_INST}]},
+    contents:[{role:'user',parts:[{text:prompt}]}],
+    generationConfig:{temperature:.3,maxOutputTokens:8192}
+  };
+  if(jsonMode)body.generationConfig.responseMimeType='application/json';
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Gemini API error '+r.status);}
+  const d=await r.json();
+  return d.candidates?.[0]?.content?.parts?.map(p=>p.text).join('')||'';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════════
+function showTab(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('panel-'+name)?.classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>{
+    const oc=t.getAttribute('onclick');if(oc&&oc.includes("'"+name+"'"))t.classList.add('on');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BUREAU SELECT
+// ═══════════════════════════════════════════════════════════════════
+function selBureau(b){
+  S.curBureau=b;
+  document.getElementById('report-lbl').textContent='PASTE '+b.toUpperCase()+' REPORT TEXT BELOW';
+  ['Equifax','Experian','TransUnion'].forEach(x=>{
+    const btn=document.getElementById('bbtn-'+x);
+    if(!btn)return;
+    if(x===b){btn.classList.add('btn-teal')}else{btn.classList.remove('btn-teal')}
+  });
+  document.getElementById('analyze-summary').style.display='none';
+  document.getElementById('items-section').style.display='none';
+  document.getElementById('letter-preview').style.display='none';
+  const saved=ls.get('rpt-'+b);
+  document.getElementById('report-txt').value=saved||'';
+  if(S.analyses[b])renderAnalysis(S.analyses[b]);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ANALYZE REPORT
+// ═══════════════════════════════════════════════════════════════════
+async function analyzeReport(){
+  readConsumer();
+  const txt=document.getElementById('report-txt').value.trim();
+  if(!txt){alert('Please paste your credit report text first.');return;}
+  ls.set('rpt-'+S.curBureau,txt);
+  const btn=document.getElementById('btn-analyze');
+  btn.disabled=true;
+  document.getElementById('analyze-status').style.display='block';
+  document.getElementById('analyze-summary').style.display='none';
+  document.getElementById('items-section').style.display='none';
+  document.getElementById('letter-preview').style.display='none';
+  try{
+    const prompt=`Analyze this ${S.curBureau} credit report for ${S.consumer.name||'the consumer'}.
+
+REPORT TEXT:
+${txt}
+
+Return ONLY valid JSON (no markdown fences, no extra text). Structure:
+{
+  "summary": "2-3 sentence overall assessment",
+  "items": [
+    {
+      "id": "i001",
+      "type": "collection|late_payment|charge_off|inquiry|error|public_record|other",
+      "creditor": "creditor name",
+      "accountNumber": "account number or last 4 digits",
+      "amount": "balance amount or N/A",
+      "date": "date reported MM/YYYY",
+      "dofd": "date of first delinquency MM/YYYY or null if unknown",
+      "severity": "critical|high|medium|low",
+      "disputable": true,
+      "disputeReason": "specific legal basis and FCRA/FDCPA citation",
+      "recommendedStrategy": "609|611|623|goodwill|validation|inquiry|obsolete|p4d",
+      "notes": "additional strategy details and any re-aging concerns"
+    }
+  ],
+  "priorityActions": ["action 1", "action 2", "action 3"],
+  "rebuildNotes": "credit rebuild advice specific to this report"
+}`;
+    const raw=await gemini(prompt,true);
+    let parsed;
+    try{parsed=JSON.parse(raw);}catch(e){
+      const m=raw.match(/\{[\s\S]*\}/);
+      if(m)try{parsed=JSON.parse(m[0]);}catch(e2){throw new Error('Could not parse AI response. Try again.');}
+      else throw new Error('Could not parse AI response. Try again.');
+    }
+    S.analyses[S.curBureau]=parsed;
+    saveAll();
+    renderAnalysis(parsed);
+    updateDash();
+    updateDots();
+  }catch(e){
+    alert('Error: '+e.message+'\n\nIf you see "Failed to fetch", make sure you entered your Gemini API key (click the key icon at top right).');
+  }
+  btn.disabled=false;
+  document.getElementById('analyze-status').style.display='none';
+}
+
+// ─── Render analysis results ───────────────────────────────────────
+const SEV_ORDER={critical:0,high:1,medium:2,low:3};
+const SEV_BADGE={critical:'br',high:'by',medium:'bb',low:'bm'};
+const STRAT_LABELS={
+  '609':'§609 — Method of Verification',
+  '611':'§611 — Reinvestigation Demand',
+  '623':'§623 — Direct Furnisher',
+  'goodwill':'Goodwill Deletion',
+  'validation':'FDCPA §809 — Debt Validation',
+  'inquiry':'§604 — Permissible Purpose',
+  'obsolete':'§605 — Obsolescence / Time-Barred',
+  'p4d':'Pay-for-Delete Offer'
+};
+
+function renderAnalysis(result){
+  if(result.summary){
+    document.getElementById('sum-text').textContent=result.summary;
+    document.getElementById('analyze-summary').style.display='block';
+  }
+  const items=[...(result.items||[])].sort((a,b)=>(SEV_ORDER[a.severity]||3)-(SEV_ORDER[b.severity]||3));
+  const disputable=items.filter(i=>i.disputable).length;
+  document.getElementById('items-lbl').textContent=`${items.length} ITEM(S) FOUND — ${disputable} DISPUTABLE`;
+  document.getElementById('items-list').innerHTML=items.map((item,idx)=>buildItemHTML(item,idx)).join('');
+  document.getElementById('items-section').style.display='block';
+}
+
+function buildItemHTML(item,idx){
+  const strats=Object.entries(STRAT_LABELS).map(([k,lbl])=>`<option value="${k}"${k===item.recommendedStrategy?' selected':''}>${lbl}</option>`).join('');
+  return `<div class="item ${item.severity||'low'}">
+    <div class="item-hdr">
+      <div class="flex gap8 ac" style="flex:1;min-width:0">
+        <span class="item-name">${escH(item.creditor||'Unknown')}</span>
+        <span class="badge ${SEV_BADGE[item.severity]||'bm'}">${item.severity||'low'}</span>
+        <span class="badge bm">${(item.type||'').replace('_',' ')}</span>
+      </div>
+      <span class="cm nowrap" style="font-size:12px;margin-left:8px">${escH(item.amount||'')}</span>
+    </div>
+    <div class="item-meta">Acct: ${escH(item.accountNumber||'N/A')} · Reported: ${escH(item.date||'N/A')}${item.dofd?' · DOFD: '+escH(item.dofd):''}</div>
+    ${item.disputeReason?`<div class="item-reason">${escH(item.disputeReason)}</div>`:''}
+    ${item.notes?`<div class="item-note">${escH(item.notes)}</div>`:''}
+    ${item.disputable?`<div class="item-actions">
+      <span class="cm" style="font-size:11px">Strategy:</span>
+      <select id="strat-${idx}" style="flex:1;min-width:180px;font-size:11px">${strats}</select>
+      <button class="btn-sm btn-teal" onclick="generateLetter(${idx})">Generate Letter →</button>
+    </div>`:`<div class="item-note">Not currently disputable — monitor for changes in status or DOFD.</div>`}
+  </div>`;
+}
+
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ═══════════════════════════════════════════════════════════════════
+// GENERATE LETTER
+// ═══════════════════════════════════════════════════════════════════
+function generateLetter(idx){
+  readConsumer();
+  const analysis=S.analyses[S.curBureau];
+  if(!analysis)return;
+  const items=[...(analysis.items||[])].sort((a,b)=>(SEV_ORDER[a.severity]||3)-(SEV_ORDER[b.severity]||3));
+  const item=items[idx];
+  if(!item)return;
+  const sel=document.getElementById('strat-'+idx);
+  const strategy=sel?sel.value:(item.recommendedStrategy||'611');
+  addDispute(item,S.curBureau,strategy);
+}
+
+function addManualItem(){
+  readConsumer();
+  const item={
+    creditor:v('m-creditor')||'Unknown',
+    accountNumber:v('m-acct')||'N/A',
+    amount:v('m-amount')||'N/A',
+    date:v('m-date')||'N/A',
+    dofd:v('m-dofd')||null,
+    type:v('m-type'),
+    severity:v('m-sev'),
+    disputable:true,
+    disputeReason:v('m-reason')||'Item is inaccurate or unverifiable.',
+    notes:'Manually added item.',
+    recommendedStrategy:v('m-strat')
+  };
+  if(!item.creditor||item.creditor==='Unknown'){alert('Please enter a creditor name.');return;}
+  const bureau=v('m-bureau');
+  addDispute(item,bureau,v('m-strat'));
+  alert('Item added and letter generated! Go to the DISPUTES tab to view it.');
+}
+
+function addDispute(item,bureau,strategy){
+  const letter=buildLetter(S.consumer,item,bureau,strategy);
+  const dispute={
+    id:'D'+Date.now(),bureau,item,strategy,
+    stratLabel:STRAT_LABELS[strategy]||strategy,
+    letter,status:'Draft',
+    created:new Date().toISOString()
+  };
+  S.disputes.unshift(dispute);
+  saveAll();
+  S.curLetter=letter;
+  document.getElementById('lp-text').textContent=letter;
+  document.getElementById('letter-preview').style.display='block';
+  document.getElementById('letter-preview').scrollIntoView({behavior:'smooth'});
+  updateDash();
+  renderDisputes();
+  updateTabLabel();
+}
+
+function copyCurrentLetter(){
+  navigator.clipboard.writeText(S.curLetter).then(()=>{
+    const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=S.curLetter;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LETTER BUILDER — ALL 8 STRATEGIES (100% offline)
+// ═══════════════════════════════════════════════════════════════════
+const BUREAU_ADDR={
+  Equifax:'Equifax Information Services LLC\nP.O. Box 740256\nAtlanta, GA 30374-0256',
+  Experian:'Experian\nP.O. Box 4500\nAllen, TX 75013',
+  TransUnion:'TransUnion LLC Consumer Dispute Center\nP.O. Box 2000\nChester, PA 19016'
+};
+
+function buildLetter(c,item,bureau,strategy){
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const addr=BUREAU_ADDR[bureau]||bureau+'\nDispute Department';
+  const toFurnisher=['623','goodwill','p4d','validation'].includes(strategy);
+  const recipient=toFurnisher
+    ? `${item.creditor||'[CREDITOR]'}\nAttn: ${strategy==='goodwill'?'Customer Relations / Goodwill Department':strategy==='p4d'?'Settlement Department':'Compliance / Dispute Department'}\n[CREDITOR MAILING ADDRESS — look up at their website or on your statement]`
+    : addr;
+  const header=`${c.name||'[YOUR FULL NAME]'}\n${c.addr||'[STREET ADDRESS]'}\n${c.city||'[CITY]'}, ${c.state||'[ST]'} ${c.zip||'[ZIP]'}\n${c.phone||'[PHONE]'}\nDate of Birth: ${c.dob||'[MM/DD/YYYY]'}${c.ssn?' · SSN Last 4: '+c.ssn:''}\n\n${today}\n\n${recipient}\n\nVia Certified Mail — Return Receipt Requested\n\n`;
+  const ID=`    Creditor / Furnisher:  ${item.creditor||'[CREDITOR]'}\n    Account Number:        ${item.accountNumber||'[ACCOUNT #]'}\n    Balance / Amount:      ${item.amount||'N/A'}\n    Date Reported:         ${item.date||'N/A'}${item.dofd?'\n    Date of First Delinquency (DOFD): '+item.dofd:''}`;
+
+  const sig=`\nRespectfully,\n\n\n${c.name||'[YOUR SIGNATURE]'}\n\n`;
+
+  if(strategy==='609') return header+`RE: Formal Dispute — Method of Verification Demand\n    FCRA Section 609, 15 U.S.C. § 1681g\n\nTo Whom It May Concern:\n\nPursuant to the Fair Credit Reporting Act (FCRA), Section 609, 15 U.S.C. § 1681g, I formally dispute the following item currently appearing on my ${bureau} credit report and demand complete disclosure of the method used to verify this information:\n\n${ID}\n\nPursuant to §609, I am entitled to know — and you are required to disclose — the complete method of verification. I therefore demand you provide ALL of the following:\n\n  1. The EXACT method of verification used to confirm this information\n  2. The name, address, and telephone number of every person contacted\n  3. The specific date on which verification occurred\n  4. Copies of ALL source documents submitted by the furnisher as proof\n\nPursuant to FCRA §611(a)(5)(A), if you cannot provide complete documented verification within 30 days of receiving this notice, you are legally required to immediately DELETE this item from my credit file.\n\nWillful noncompliance subjects your agency to civil liability under FCRA §§616-617: statutory damages of $100 to $1,000 per violation, actual damages, punitive damages, and attorney's fees. I am simultaneously filing a CFPB complaint to document this dispute and ensure regulatory oversight of your investigation.\n\nPlease provide a written response confirming receipt and detailing steps taken.`+sig+`Enclosures:\n  • Copy of government-issued photo ID\n  • Proof of current address (utility bill or bank statement dated within 60 days)`;
+
+  if(strategy==='611') return header+`RE: Notice of Formal Dispute — Reinvestigation Demand\n    FCRA Section 611, 15 U.S.C. § 1681i\n\nTo Whom It May Concern:\n\nI formally dispute the following inaccurate and/or unverifiable information appearing on my ${bureau} credit report pursuant to FCRA Section 611, 15 U.S.C. § 1681i:\n\n${ID}\n\nBasis for Dispute: ${item.disputeReason||'This item is inaccurate and/or cannot be verified with competent, credible evidence.'}\n\nPursuant to FCRA §611(a)(1), you are required to conduct a reasonable reinvestigation of this dispute within 30 days of receiving this notice (45 days if I provide additional information during the investigation period). During reinvestigation you must:\n\n  (1) Forward this dispute and all relevant information to the furnisher\n  (2) Review all information I have provided herein\n  (3) Record the current status or result of the investigation\n  (4) Notify me of the results within 5 business days of completion\n\nIf the information is found to be inaccurate, incomplete, or UNVERIFIABLE — regardless of what the furnisher claims — FCRA §611(a)(5)(A) requires you to promptly DELETE or CORRECT the information and provide me written notice.\n\nIMPORTANT: I am tracking the USPS certified mail receipt date as the start of your 30-day statutory clock. Any failure to complete reinvestigation within 30 days requires immediate deletion of this item per §611(a)(1). I will escalate to CFPB complaint and pursue civil action under §§616-617 for any deadline violations.\n\nI am also simultaneously filing a CFPB complaint at consumerfinance.gov to ensure regulatory documentation of this dispute.`+sig+`Enclosures:\n  • Copy of government-issued photo ID\n  • Proof of current address\n  • [Include any supporting documentation you have]`;
+
+  if(strategy==='623') return header+`RE: Direct Furnisher Dispute — Accuracy & Integrity Obligations\n    FCRA Section 623, 15 U.S.C. § 1681s-2(b)\n\nTo Whom It May Concern:\n\nPursuant to FCRA Section 623, 15 U.S.C. § 1681s-2(b), I dispute the following inaccurate information that your organization is currently furnishing to consumer reporting agencies:\n\n${ID}\n\nBasis for Dispute: ${item.disputeReason||'The information you are furnishing to consumer reporting agencies does not accurately reflect my account history and/or is not verifiable with competent evidence.'}\n\nUpon receiving this notice, FCRA §623(b) imposes the following independent legal obligations on your organization — separate from and in addition to any bureau reinvestigation:\n\n  (1) Conduct a REASONABLE INVESTIGATION within 30 days of this notice\n  (2) Review ALL relevant information I have provided herein\n  (3) Report the corrected results to EVERY consumer reporting agency to which you furnished the disputed information\n  (4) If inaccurate, incomplete, or unverifiable — CORRECT OR DELETE the information AND notify all three bureaus\n\nFailure to fulfill these §623(b) obligations constitutes a willful FCRA violation, subjecting your organization to civil liability under §§616-617: statutory damages of $100–$1,000 per violation, actual damages, punitive damages, and attorney's fees.\n\nPlease provide written confirmation of the actions taken within 30 days of receiving this notice. I am also simultaneously disputing this item directly with ${bureau} and filing a CFPB complaint to document this matter.`+sig;
+
+  if(strategy==='goodwill') return header+`RE: Goodwill Deletion Request — Account ${item.accountNumber||'[ACCOUNT #]'}\n\nDear Customer Relations Team:\n\nI am writing to respectfully request a goodwill adjustment for the following account:\n\n${ID}\n\nI acknowledge that the above information may be accurate. However, I am respectfully requesting that your organization consider removing this negative mark as a gesture of goodwill toward a customer who values your company.\n\nThis negative entry occurred during [DESCRIBE YOUR CIRCUMSTANCES — e.g., "a period of unexpected job loss / serious medical hardship / a family emergency"] and represents an isolated incident that is entirely uncharacteristic of my overall financial history and behavior.\n\nSince that time, I have worked diligently to restore my financial health and have maintained my obligations responsibly. I understand that extending this type of courtesy is entirely at your discretion, and I genuinely appreciate your consideration.\n\nI am aware that many creditors do extend this accommodation to customers with otherwise strong histories who experienced an isolated hardship, and I sincerely hope your organization will consider doing the same. A removal of this single entry would be enormously meaningful to my financial recovery and future opportunities.\n\nI am happy to provide any supporting documentation — such as evidence of the hardship — if that would be helpful in your consideration. Thank you sincerely for your time and attention.`+sig;
+
+  if(strategy==='validation') return header+`RE: Formal Debt Validation Demand — CEASE ALL COLLECTION ACTIVITY IMMEDIATELY\n    FDCPA Section 809(b), 15 U.S.C. § 1692g(b)\n\nTo Whom It May Concern:\n\nPursuant to the Fair Debt Collection Practices Act (FDCPA), Section 809(b), 15 U.S.C. § 1692g(b), I dispute the validity of the following alleged debt and demand complete validation before any further action is taken:\n\n${ID}\n\nYou are required to provide ALL of the following items of validation:\n\n  1. Complete name and mailing address of the original creditor\n  2. Copy of the ORIGINAL signed agreement (application or contract) that created this alleged debt\n  3. Itemized, line-by-line accounting of the alleged balance: original principal, all interest charges with applicable rates and dates, all fees with descriptions and dates, and the exact current balance total\n  4. Proof that your agency holds a current, valid license to collect debts in the State of ${c.state||'[STATE]'}, including your license number\n  5. Complete chain of title documentation demonstrating your agency's legal authority to collect this alleged debt, including all assignment and purchase agreements\n  6. The Date of First Delinquency (DOFD) on the original account confirming this debt is NOT time-barred under ${c.state||'[STATE]'} law\n\nMANDATORY CEASE AND DESIST — EFFECTIVE IMMEDIATELY:\nPursuant to FDCPA §809(b), you must IMMEDIATELY CEASE ALL collection activity upon receipt of this notice — including any communication, contact attempt, AND any updating, modification, or new reporting to Equifax, Experian, or TransUnion — until this debt is FULLY AND COMPLETELY validated to my satisfaction.\n\nContinued collection activity, including any CRA reporting, without validation constitutes willful FDCPA violations under §812: $1,000 statutory damages PER VIOLATION, plus actual damages and attorney's fees.\n\nUnder CFPB Regulation F (effective November 30, 2021), if this alleged debt is past the applicable statute of limitations for ${c.state||'[STATE]'}, you are REQUIRED to disclose that fact.\n\nAll further communication must be in WRITING ONLY to the address listed above. All telephone contact must cease immediately.`+sig;
+
+  if(strategy==='inquiry') return header+`RE: Unauthorized Hard Inquiry Dispute — Permissible Purpose Demand\n    FCRA Section 604, 15 U.S.C. § 1681b\n\nTo Whom It May Concern:\n\nI am disputing the following unauthorized hard inquiry currently appearing on my ${bureau} credit report:\n\n    Inquiring Entity:    ${item.creditor||'[INQUIRING ENTITY]'}\n    Date of Inquiry:     ${item.date||'[DATE]'}\n\nFCRA §604, 15 U.S.C. § 1681b, strictly limits the permissible purposes for which a consumer reporting agency may furnish a consumer report. The enumerated permissible purposes include: a transaction initiated by the consumer, credit review of an existing account, employment purposes (with written consent), insurance underwriting, and certain other specific circumstances.\n\nI did not authorize this entity to access my credit report on the date indicated. I did not initiate any credit application, service request, account opening, or any other transaction with this entity that would constitute a permissible purpose under §604. This inquiry therefore lacks any lawful basis.\n\nI demand that you:\n\n  (1) Immediately investigate whether this inquiry had a documented, legally valid permissible purpose\n  (2) Contact the inquiring entity and demand written documentation of permissible purpose — including the specific consumer request or application that triggered the inquiry\n  (3) DELETE this inquiry immediately if permissible purpose cannot be fully and specifically documented\n\nUnauthorized access to a consumer credit report without permissible purpose is a FCRA violation. I am prepared to pursue civil action under §§616-617 for willful violations, including statutory damages of $100–$1,000 per violation. I am also prepared to file a CFPB complaint and refer this matter to the FTC.`+sig+`Note: Please provide written confirmation of this inquiry's deletion or your written documentation of permissible purpose within 30 days.`;
+
+  if(strategy==='obsolete') return header+`RE: Demand for Immediate Deletion — Obsolete/Time-Barred Information\n    FCRA Section 605, 15 U.S.C. § 1681c\n\nTo Whom It May Concern:\n\nI demand the IMMEDIATE DELETION of the following obsolete, time-barred item from my ${bureau} credit report pursuant to FCRA §605, 15 U.S.C. § 1681c:\n\n${ID}\n\nFCRA §605(a) PROHIBITS the reporting of:\n  • Most negative information more than 7 years from the Date of First Delinquency (DOFD)\n  • Chapter 7 bankruptcies more than 10 years old\n  • Chapter 13 bankruptcies more than 7 years old\n\nPer FCRA §605(c), the DOFD — defined as the date of the commencement of the delinquency on the account that immediately preceded the collection or charge-off — is the SOLE date that controls the 7-year reporting clock. The charge-off date, the date sold to collections, the date a collection agency first reported, and the date first reported to any bureau are ALL legally irrelevant to this calculation.\n\nThe DOFD on this account confirms this item has exceeded its maximum allowable reporting period and must be deleted.\n\nCRITICAL WARNING: Any attempt to reset, alter, or re-report the DOFD — known as "re-aging" — constitutes a SEPARATE, ADDITIONAL FCRA violation subject to its own civil liability under §§616-617. If re-aging has occurred on this account, I am prepared to pursue legal action for each instance.\n\nThis item MUST be deleted from my credit report immediately. Provide written confirmation of deletion within 5 business days of removal.`+sig;
+
+  // Pay-for-Delete
+  return header+`RE: Conditional Settlement Offer — Payment in Exchange for Complete Deletion\n    Account: ${item.accountNumber||'[ACCOUNT #]'}\n\nTo Whom It May Concern:\n\nI am prepared to resolve the above-referenced account under the following strictly conditional terms:\n\n${ID}\n\nSETTLEMENT OFFER: I offer $[NEGOTIATED AMOUNT] as full, final, and complete settlement of any and all claims arising from or related to this alleged account. This offer is STRICTLY CONDITIONAL upon the prior receipt of a written agreement confirming ALL of the following:\n\n  1. Upon cleared receipt of payment, your organization will submit a COMPLETE DELETION request to Equifax, Experian, AND TransUnion — not "Paid," not "Settled for Less Than Full Amount," not "Paid as Agreed," but DELETED and removed entirely from my credit file\n  2. Deletion requests will be submitted to all three credit bureaus within five (5) business days of confirmed receipt of payment\n  3. Your organization will NOT re-sell, assign, sub-assign, transfer, or otherwise convey this account or any balance thereon to any third party\n  4. Written confirmation of all deletion submissions will be provided to me within ten (10) business days\n  5. This settlement constitutes full satisfaction of the alleged debt\n\nThis offer is valid for thirty (30) days from the date of this letter. Payment will be issued ONLY after I have received the fully executed written agreement on company letterhead, signed by an authorized representative.\n\nThis offer does not constitute: an acknowledgment of the validity of this alleged debt; an admission of liability; a waiver of any rights under the FCRA or FDCPA; or a restart of any applicable statute of limitations. All rights are expressly reserved.\n\nRespond in writing ONLY to the address above. Do not call.`+sig;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DISPUTES TAB
+// ═══════════════════════════════════════════════════════════════════
+const STATUS_SEQ=['Draft','Sent','Received','In Investigation','Resolved','Verified-Remains','Escalated'];
+const STATUS_BADGE={Draft:'bm',Sent:'bb','Received':'by','In Investigation':'by',Resolved:'bg','Verified-Remains':'br',Escalated:'bt'};
+
+function setFilter(f){
+  S.filter=f;
+  document.querySelectorAll('[id^="df-"]').forEach(b=>b.style.fontWeight='400');
+  const el=document.getElementById('df-'+f);if(el)el.style.fontWeight='700';
+  renderDisputes();
+}
+
+function renderDisputes(){
+  const f=S.filter;
+  const list=S.disputes.filter(d=>f==='All'||d.bureau===f||d.status===f);
+  const el=document.getElementById('disp-list');
+  if(list.length===0){el.innerHTML='<div style="text-align:center;padding:50px 0;color:var(--tx3)">No disputes matching this filter.<br>Go to REPORTS or ADD ITEM to create dispute letters.</div>';return;}
+  el.innerHTML=list.map(d=>`
+    <div class="item ${d.status==='Resolved'?'resolved':d.status==='Verified-Remains'?'critical':'medium'}" id="drow-${d.id}">
+      <div class="item-hdr">
+        <div class="flex gap8 ac" style="flex:1;min-width:0">
+          <span class="item-name">${escH(d.item?.creditor||'Unknown')}</span>
+          <span class="badge bt">${escH(d.bureau)}</span>
+          <span class="badge ${STATUS_BADGE[d.status]||'bm'}">${d.status}</span>
+        </div>
+      </div>
+      <div class="item-meta">${escH(d.stratLabel||d.strategy)} · Created ${new Date(d.created).toLocaleDateString()}${d.updated?' · Updated '+new Date(d.updated).toLocaleDateString():''}</div>
+      <div class="flex gap6 ac fw" style="margin-bottom:8px">
+        <span class="cm" style="font-size:11px">Status:</span>
+        <select style="flex:1;min-width:160px;font-size:11px" onchange="updateStatus('${d.id}',this.value)">
+          ${STATUS_SEQ.map(s=>`<option value="${s}"${s===d.status?' selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn-sm" onclick="copyDispLetter('${d.id}')">Copy Letter</button>
+        <button class="btn-sm" onclick="toggleLetter('${d.id}')">View / Hide</button>
+        <button class="btn-sm btn-red" onclick="removeDisp('${d.id}')">Remove</button>
+      </div>
+      ${d.status==='Sent'?`<div class="notice warn" style="margin-top:0;font-size:11px">⏱ Track your 30-day clock! Certified mail receipt date = Day 1. Mark "Resolved" or "Verified-Remains" when bureau responds.</div>`:''}
+      <div id="dl-${d.id}" style="display:none;margin-top:8px"><div class="letter-box">${escH(d.letter||'')}</div></div>
+    </div>`).join('');
+}
+
+function updateStatus(id,status){
+  S.disputes=S.disputes.map(d=>d.id===id?{...d,status,updated:new Date().toISOString()}:d);
+  saveAll();renderDisputes();updateDash();
+}
+function copyDispLetter(id){
+  const d=S.disputes.find(x=>x.id===id);
+  if(!d)return;
+  navigator.clipboard.writeText(d.letter).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=d.letter;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+  const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Letter',2000);
+}
+function toggleLetter(id){const el=document.getElementById('dl-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
+function removeDisp(id){if(!confirm('Remove this dispute letter?'))return;S.disputes=S.disputes.filter(d=>d.id!==id);saveAll();renderDisputes();updateDash();updateTabLabel();}
+
+// ═══════════════════════════════════════════════════════════════════
+// REBUILD
+// ═══════════════════════════════════════════════════════════════════
+function calcUtil(){
+  const bal=parseFloat(document.getElementById('u-bal').value)||0;
+  const lim=parseFloat(document.getElementById('u-lim').value)||0;
+  if(lim<=0){document.getElementById('u-pct').textContent='—';document.getElementById('u-bar').style.display='none';return;}
+  const pct=Math.round((bal/lim)*100);
+  const pctEl=document.getElementById('u-pct');
+  const lblEl=document.getElementById('u-label');
+  pctEl.textContent=pct+'%';
+  pctEl.style.color=pct<=10?'var(--green)':pct<=30?'var(--yellow)':'var(--red)';
+  lblEl.textContent=pct<=10?'Excellent ✓':pct<=30?'Acceptable':'Too High — Pay Down';
+  lblEl.style.color=pct<=10?'var(--green)':pct<=30?'var(--yellow)':'var(--red)';
+  const fill=document.getElementById('u-fill');
+  fill.style.width=Math.min(100,pct)+'%';
+  fill.style.background=pct<=10?'var(--green)':pct<=30?'var(--yellow)':'var(--red)';
+  document.getElementById('u-bar').style.display='block';
+  const t10=Math.ceil(lim*0.10);
+  const t30=Math.ceil(lim*0.30);
+  document.getElementById('u-tip').textContent=pct>30
+    ?`Pay down to $${t10.toLocaleString()} (10%) for maximum score impact. Even reaching $${t30.toLocaleString()} (30%) will help significantly.`
+    :pct>10
+    ?`You're in acceptable range. Pay down to $${t10.toLocaleString()} (10%) for maximum score impact.`
+    :`You are in the optimal range. Keep balances below $${t10.toLocaleString()} to maintain this.`;
+}
+
+async function genRebuild(){
+  readConsumer();
+  const btn=document.getElementById('btn-rebuild');
+  btn.disabled=true;
+  document.getElementById('rebuild-status').style.display='block';
+  document.getElementById('rebuild-out').style.display='none';
+  const summary={
+    state:S.consumer.state||'IL',
+    totalDisputes:S.disputes.length,
+    resolved:S.disputes.filter(d=>d.status==='Resolved').length,
+    bureauData:Object.entries(S.analyses).filter(([,v])=>v?.summary).map(([k,v])=>({bureau:k,summary:v.summary,rebuildNotes:v.rebuildNotes,itemCount:v.items?.length||0}))
+  };
+  try{
+    const prompt=`Create a detailed, personalized credit rebuild action plan for this consumer.
+
+Consumer state: ${summary.state}
+Total disputes filed: ${summary.totalDisputes}
+Disputes resolved: ${summary.resolved}
+Bureau analysis data: ${JSON.stringify(summary.bureauData)}
+
+Provide a comprehensive rebuild plan covering:
+
+1. IMMEDIATE ACTIONS (0-30 days) — Specific steps to take right now, today
+2. SHORT-TERM STRATEGY (1-6 months) — Building positive momentum
+3. LONG-TERM BUILDING (6-24 months) — Sustained score growth path
+4. SPECIFIC PRODUCT RECOMMENDATIONS — Name specific products: Discover it Secured, OpenSky Secured Visa, Self Credit Builder Loan, Chime Credit Builder, Capital One Secured, Kikoff, Credit Strong. Explain which to get first and why.
+5. UTILIZATION MANAGEMENT — Exact strategy: which cards to use, what % to carry, when to pay
+6. PIGGYBACKING STRATEGY — How to leverage authorized user status
+7. SCORE MILESTONE PROJECTIONS — Realistic timeline for reaching 580, 620, 660, 700, 740+
+8. PITFALLS TO AVOID — Top 5 mistakes that derail credit rebuilding
+9. DISPUTE FOLLOW-UP — What to do if bureau doesn't respond or verifies incorrectly
+
+Be specific, actionable, and realistic. No generic advice.`;
+    const result=await gemini(prompt);
+    document.getElementById('rebuild-out').textContent=result;
+    document.getElementById('rebuild-out').style.display='block';
+    ls.set('rebuild',result);
+  }catch(e){
+    document.getElementById('rebuild-out').textContent='Error: '+e.message;
+    document.getElementById('rebuild-out').style.display='block';
+  }
+  btn.disabled=false;
+  document.getElementById('rebuild-status').style.display='none';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INTEL
+// ═══════════════════════════════════════════════════════════════════
+async function fetchIntel(){
+  const btn=document.getElementById('btn-intel');
+  btn.disabled=true;
+  document.getElementById('intel-status').style.display='block';
+  document.getElementById('intel-out').style.display='none';
+  try{
+    const prompt=`Generate a comprehensive credit repair law intelligence briefing as of April 2026 covering:
+
+1. NEW & CHANGED REGULATIONS (2024-2026) — Any updates to FCRA, FDCPA, CFPB rules, Reg F, and related regulations
+2. NOTABLE COURT DECISIONS — Key consumer wins and losses in FCRA/FDCPA litigation that affect dispute strategy
+3. BUREAU ENFORCEMENT ACTIONS — Any CFPB or FTC actions against Equifax, Experian, or TransUnion; any settlement agreements that expanded consumer rights
+4. ACTIVE LOOPHOLES & STRATEGIES — Current most effective legal strategies based on how bureaus are actually responding
+5. EMERGING TACTICS — New approaches being used successfully by consumer advocates and credit repair attorneys
+6. DEBT BUYER VULNERABILITIES — Specific weaknesses in how JDB (Junk Debt Buyers) like Midland Credit, Portfolio Recovery, LVNV Funding, Cavalry Portfolio operate that consumers can exploit legally
+7. CFPB COMPLAINT EFFECTIVENESS — Current statistics and best practices for using CFPB complaints as leverage
+8. STATE-SPECIFIC OPPORTUNITIES — States with stronger consumer protection laws than federal baseline
+
+Be specific, cite law sections, and provide actionable intelligence. Focus on what actually works in 2025-2026.`;
+    const result=await gemini(prompt);
+    document.getElementById('intel-out').textContent=result;
+    document.getElementById('intel-out').style.display='block';
+    ls.set('intel',result);
+  }catch(e){
+    document.getElementById('intel-out').textContent='Error: '+e.message;
+    document.getElementById('intel-out').style.display='block';
+  }
+  btn.disabled=false;
+  document.getElementById('intel-status').style.display='none';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+function updateDash(){
+  const total=Object.values(S.analyses).reduce((s,a)=>s+(a?.items?.length||0),0);
+  const resolved=S.disputes.filter(d=>d.status==='Resolved').length;
+  const active=S.disputes.filter(d=>!['Draft','Resolved','Verified-Remains'].includes(d.status)).length;
+  document.getElementById('s-items').textContent=total;
+  document.getElementById('s-letters').textContent=S.disputes.length;
+  document.getElementById('s-active').textContent=active;
+  document.getElementById('s-resolved').textContent=resolved;
+  ['Equifax','Experian','TransUnion'].forEach(b=>{
+    const id={Equifax:'eq',Experian:'ex',TransUnion:'tu'}[b];
+    const a=S.analyses[b];
+    const bsEl=document.getElementById('bs-'+id);
+    const pbEl=document.getElementById('pb-'+id);
+    const disputed=S.disputes.filter(d=>d.bureau===b).length;
+    if(bsEl){
+      if(a){
+        bsEl.textContent=`${a.items?.length||0} items found · ${disputed} letters generated`;
+        bsEl.style.color='var(--tx)';
+      }else{
+        bsEl.textContent='Not yet analyzed';
+        bsEl.style.color='var(--tx3)';
+      }
+    }
+    if(pbEl&&a){
+      const pct=a.items?.length>0?Math.min(100,Math.round((disputed/a.items.length)*100)):0;
+      pbEl.style.width=pct+'%';
+    }
+  });
+}
+
+function updateDots(){
+  ['Equifax','Experian','TransUnion'].forEach(b=>{
+    const id={Equifax:'eq',Experian:'ex',TransUnion:'tu'}[b];
+    const dot=document.getElementById('dot-'+id);
+    if(dot){dot.classList.toggle('on',!!S.analyses[b]);dot.textContent=b.charAt(0).toUpperCase()+(b==='TransUnion'?'U':b.charAt(1))+' '+(S.analyses[b]?'✓':'○');}
+  });
+}
+
+function updateTabLabel(){
+  const el=document.getElementById('tab-disp');
+  if(el)el.textContent='DISPUTES'+(S.disputes.length>0?` (${S.disputes.length})`:'');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COLLAPSIBLES
+// ═══════════════════════════════════════════════════════════════════
+function toggleColl(id){
+  const body=document.getElementById('body-'+id);
+  const arr=document.getElementById('arr-'+id);
+  if(!body||!arr)return;
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  arr.textContent=open?'▼':'▲';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// STATIC CONTENT — LOOPHOLES
+// ═══════════════════════════════════════════════════════════════════
+const LOOPHOLES=[
+  ['The 30-Day Deletion Trap','Send disputes via USPS Certified Mail with Return Receipt. Track the receipt date — that is Day 1 of the bureau\'s 30-day statutory investigation window. If the bureau fails to complete its investigation within 30 days, the disputed item MUST be deleted per FCRA §611(a)(1). The bureau cannot simply "verify" and restart the clock. Keep every green return receipt card as evidence.'],
+  ['The 1-2 Punch','Step 1: File a formal dispute with the bureau. Step 2: When the furnisher "verifies" the information (often with no real investigation), immediately file a direct dispute with the furnisher under §623(b), specifically citing their failure to conduct a reasonable investigation. The dual-track pressure — both the bureau AND the furnisher facing independent legal obligations simultaneously — dramatically increases deletion rates.'],
+  ['DOFD Re-Aging Attack','If you notice a collection account whose "Date of First Delinquency" appears to have been reset (e.g., it shows the collection agency\'s acquisition date instead of the original account default date), this is illegal re-aging — an independent FCRA violation. File a targeted dispute citing §605(c) and the re-aging violation specifically. This is often grounds for immediate deletion AND a separate civil claim.'],
+  ['Permissible Purpose Gap','Hard inquiries require a specific, documented permissible purpose under FCRA §604. Demand in writing that the inquiring entity provide documentation proving permissible purpose — the specific application or transaction that triggered the inquiry. Many lenders cannot locate or produce this documentation years later. No documentation = no permissible purpose = mandatory deletion.'],
+  ['Collector Licensing Check','Many debt collection agencies are not properly licensed to collect in every state where they operate. Check your state\'s banking/financial regulation website to verify the collector holds a current, valid collection agency license. If they don\'t, their collection activity AND any credit reporting may constitute FDCPA violations. Report to your state AG and the CFPB.'],
+  ['CFPB Complaint Acceleration','Filing a CFPB complaint at consumerfinance.gov simultaneously with a bureau dispute creates regulatory pressure that significantly accelerates resolution. Bureaus and furnishers must respond to CFPB complaints within specific timeframes and are subject to regulatory scrutiny. Multiple complaints = heightened attention. File one for every unresolved dispute that exceeds 30 days.'],
+  ['Duplicate Tradeline Violation','The same underlying debt may only appear once across all tradelines. If the original creditor, a debt buyer, AND a collection agency are all reporting the same account — that\'s illegal duplicate reporting and a FCRA violation. Identify all duplicates and dispute all of them simultaneously across all three bureaus, citing the duplication as your basis.'],
+  ['SOL Disclosure Requirement (Reg F)','Under CFPB Regulation F (effective November 30, 2021), debt collectors are REQUIRED to disclose when a debt is past the applicable statute of limitations for the consumer\'s state. Failure to make this disclosure when required is an independent FDCPA violation worth $1,000 per occurrence. If a collector has contacted you about time-barred debt without this disclosure, you may have a claim.'],
+  ['2-Year Inquiry Auto-Delete','Hard inquiries older than 24 months MUST be deleted from your credit report per FCRA. Bureaus are supposed to do this automatically — but they frequently fail to. Pull your reports and audit every inquiry date. Any inquiry older than 2 years that remains on your report should be disputed immediately with a simple obsolescence demand.'],
+  ['Authorized User Piggybacking','Being added as an authorized user on someone else\'s well-managed credit card account (long history, low utilization, zero late payments) adds that entire account history to your credit file. This is completely legal under FCRA and can add significant positive tradeline history instantly. You do not need to have or use the physical card — just be added to the account.'],
+  ['Pay-for-Delete Negotiation','While not formally endorsed by the major bureaus, pay-for-delete agreements are legal and enforceable as private contracts when the creditor agrees in writing BEFORE payment. CRITICAL: Never pay first and ask later — payment eliminates your leverage. Always get the written deletion agreement on company letterhead first, then pay. Courts have upheld these agreements.'],
+  ['JUNK DEBT BUYER Chain of Title','When a debt has been sold multiple times (Original Creditor → Debt Buyer 1 → Debt Buyer 2 → Collection Agency), the current holder often cannot produce a complete, unbroken chain of title. Under FDCPA §809, demand proof of the complete chain of ownership. Missing documentation in the chain of title means they cannot prove legal authority to collect — a significant basis for deletion and/or case dismissal if sued.']
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// STATIC CONTENT — SOL TABLE
+// ═══════════════════════════════════════════════════════════════════
+const SOL=[
+  ['Alabama','6 yr'],['Alaska','3 yr'],['Arizona','6 yr'],['Arkansas','5 yr'],['California','4 yr'],
+  ['Colorado','6 yr'],['Connecticut','6 yr'],['Delaware','3 yr'],['Florida','5 yr'],['Georgia','6 yr'],
+  ['Hawaii','6 yr'],['Idaho','5 yr'],['Illinois','5 yr'],['Indiana','6 yr'],['Iowa','5 yr'],
+  ['Kansas','5 yr'],['Kentucky','5 yr'],['Louisiana','3 yr'],['Maine','6 yr'],['Maryland','3 yr'],
+  ['Massachusetts','6 yr'],['Michigan','6 yr'],['Minnesota','6 yr'],['Mississippi','3 yr'],['Missouri','5 yr'],
+  ['Montana','5 yr'],['Nebraska','5 yr'],['Nevada','6 yr'],['New Hampshire','3 yr'],['New Jersey','6 yr'],
+  ['New Mexico','6 yr'],['New York','3 yr'],['North Carolina','3 yr'],['North Dakota','6 yr'],['Ohio','6 yr'],
+  ['Oklahoma','5 yr'],['Oregon','6 yr'],['Pennsylvania','4 yr'],['Rhode Island','10 yr'],['South Carolina','3 yr'],
+  ['South Dakota','6 yr'],['Tennessee','6 yr'],['Texas','4 yr'],['Utah','6 yr'],['Vermont','6 yr'],
+  ['Virginia','5 yr'],['Washington','6 yr'],['West Virginia','10 yr'],['Wisconsin','6 yr'],['Wyoming','8 yr']
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+function buildStaticContent(){
+  // Loopholes
+  const lb=document.getElementById('body-loops');
+  if(lb)lb.innerHTML=LOOPHOLES.map(([n,d])=>`<div class="loop"><div class="loop-name">${n}</div><div class="loop-desc">${d}</div></div>`).join('');
+  // SOL table
+  const st=document.getElementById('sol-tbl');
+  if(st)st.innerHTML=SOL.map(([s,l])=>`<div class="sol-row"><span>${s}</span><span class="bold ct">${l}</span></div>`).join('');
+}
+
+// Consumer field auto-save
+['c-name','c-addr','c-city','c-state','c-zip','c-phone','c-dob','c-ssn'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',()=>{readConsumer();});
+});
+
+// Keyboard shortcut: Enter in key modal
+document.getElementById('key-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveKey();});
+
+buildStaticContent();
+loadAll();
+</script>
+</body>
+</html>
