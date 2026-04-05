@@ -161,7 +161,19 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <body>
 <div id="app">
 
-  <!-- ── API KEY EMBEDDED ── -->
+  <!-- ── API KEY MODAL ── -->
+  <div class="modal-bg" id="key-modal">
+    <div class="modal">
+      <div class="modal-title">GEMINI API KEY REQUIRED</div>
+      <div class="modal-sub">To use the AI analysis features, please provide a Google Gemini API Key. Keys are stored safely in your browser's local storage and never leave your device.</div>
+      <div class="c-field"><div class="c-lbl">Gemini API Key</div><input type="password" id="api-key-input" placeholder="AIzaSy..."/></div>
+      <div class="flex gap8 mt12">
+        <button class="btn-sm btn-teal" style="flex:1" onclick="saveKey()">Save Key</button>
+        <button class="btn-sm" style="flex:1" onclick="document.getElementById('key-modal').classList.remove('open')">Cancel</button>
+      </div>
+      <div class="notice info mt12" style="font-size:10px;line-height:1.5;margin-bottom:0">You can get a free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--teal);text-decoration:underline">aistudio.google.com</a>.</div>
+    </div>
+  </div>
 
   <!-- ── HEADER ── -->
   <div class="hdr" style="align-items:center;">
@@ -176,6 +188,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
     <div class="flex gap6 ac fw" style="padding-top:6px;">
+      <button class="btn-sm" id="btn-key-hdr" onclick="showKeyModal()" style="color:var(--red);font-weight:bold;margin-right:8px;border:1px solid var(--b2);background:var(--bg2);">🔑 Set Key</button>
       <div class="dot" id="dot-eq">EQ ○</div>
       <div class="dot" id="dot-ex">EX ○</div>
       <div class="dot" id="dot-tu">TU ○</div>
@@ -497,10 +510,26 @@ function v(id){const el=document.getElementById(id);return el?el.value.trim():''
 // ═══════════════════════════════════════════════════════════════════
 // API KEY
 // ═══════════════════════════════════════════════════════════════════
-function getKey(){return ''; /* PASTE YOUR API KEY HERE */}
-function saveKey(){}
-function checkKey(){}
-function showKeyModal(){}
+function getKey(){return ls.get('api_key')||'';}
+function saveKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k){alert('Key cannot be empty');return;}
+  ls.set('api_key',k);
+  document.getElementById('key-modal').classList.remove('open');
+  checkKey();
+}
+function checkKey(){
+  const hasKey=!!getKey();
+  const btn=document.getElementById('btn-key-hdr');
+  if(btn){
+    btn.style.color=hasKey?'var(--green)':'var(--red)';
+    btn.textContent=hasKey?'🔑 Key Set':'🔑 Set Key';
+  }
+}
+function showKeyModal(){
+  document.getElementById('api-key-input').value=getKey();
+  document.getElementById('key-modal').classList.add('open');
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // GEMINI API
