@@ -291,30 +291,36 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <button onclick="selBureau('TransUnion')" id="bbtn-TransUnion" style="flex:1;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.06em">TRANSUNION</button>
     </div>
 
-    <div class="lbl mb8" id="report-lbl">PASTE EQUIFAX REPORT TEXT BELOW</div>
-    <textarea id="report-txt" rows="11" placeholder="Paste your full credit report text here. Include all account entries, inquiry listings, public records, and personal info sections. The more complete the text, the better the AI analysis. You can copy-paste from annualcreditreport.com or your bureau's site."></textarea>
-    <button class="btn-full btn-teal mt8 mb12" id="btn-analyze" onclick="analyzeReport()">⚡ ANALYZE REPORT — IDENTIFY DISPUTABLE ITEMS</button>
-    <div id="analyze-status" style="display:none" class="loading-bar"><span class="spin"></span>Analyzing with Gemini AI... this may take 20–40 seconds</div>
+    <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+      <div style="flex:1; min-width:320px; display:flex; flex-direction:column;">
+        <div class="lbl mb8" id="report-lbl">PASTE EQUIFAX REPORT TEXT BELOW</div>
+        <textarea id="report-txt" rows="11" placeholder="Paste your full credit report text here. Include all account entries, inquiry listings, public records, and personal info sections. The more complete the text, the better the AI analysis. You can copy-paste from annualcreditreport.com or your bureau's site."></textarea>
+        <button class="btn-full btn-teal mt8 mb12" id="btn-analyze" onclick="analyzeReport()">⚡ ANALYZE REPORT — IDENTIFY DISPUTABLE ITEMS</button>
+        <div id="analyze-status" style="display:none" class="loading-bar"><span class="spin"></span>Analyzing with Gemini AI... this may take 20–40 seconds</div>
 
-    <div id="analyze-summary" style="display:none" class="card mb8">
-      <div class="lbl">AI ASSESSMENT</div>
-      <div id="sum-text" class="cm italic mt8" style="font-size:12px;line-height:1.7"></div>
-    </div>
+        <div id="analyze-summary" style="display:none" class="card mb8">
+          <div class="lbl">AI ASSESSMENT</div>
+          <div id="sum-text" class="cm italic mt8" style="font-size:12px;line-height:1.7"></div>
+        </div>
 
-    <div id="items-section" style="display:none">
-      <div class="lbl mb8" id="items-lbl">ITEMS FOUND</div>
-      <div id="items-list"></div>
-    </div>
-
-    <div id="letter-preview" style="display:none;margin-top:14px">
-      <div class="flex jsb ac mb8">
-        <div class="lbl cg" style="margin-bottom:0">✓ LETTER GENERATED — ADDED TO DISPUTES TAB</div>
-        <div class="flex gap6">
-          <button class="btn-sm" onclick="copyCurrentLetter()">Copy</button>
-          <button class="btn-sm" onclick="document.getElementById('letter-preview').style.display='none'">Hide</button>
+        <div id="items-section" style="display:none">
+          <div class="lbl mb8" id="items-lbl">ITEMS FOUND</div>
+          <div id="items-list"></div>
         </div>
       </div>
-      <div class="letter-box" id="lp-text"></div>
+
+      <div style="flex:1; min-width:320px; display:flex; flex-direction:column;">
+        <div id="letter-preview" style="display:none;">
+          <div class="flex jsb ac mb8">
+            <div class="lbl cg" style="margin-bottom:0">✓ LETTER GENERATED — ADDED TO DISPUTES TAB</div>
+            <div class="flex gap6">
+              <button class="btn-sm" onclick="copyCurrentLetter()">Copy</button>
+              <button class="btn-sm" onclick="document.getElementById('letter-preview').style.display='none'">Hide</button>
+            </div>
+          </div>
+          <div class="letter-box" id="lp-text" style="max-height:800px; overflow-y:auto; border:1px solid var(--b2); background:var(--bg1);"></div>
+        </div>
+      </div>
     </div>
   </div>
 
