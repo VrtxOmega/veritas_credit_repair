@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="https://raw.githubusercontent.com/VrtxOmega/Gravity-Omega/master/omega_icon.png" width="100" alt="VERITAS" />
   <h1>VERITAS CREDIT REPAIR AI</h1>
   <p><strong>AI-Powered Credit Analysis & Dispute Generation Platform</strong></p>
   <p><em>Powered by Gemini 2.5 Pro</em></p>
