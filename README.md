@@ -62,6 +62,26 @@ This app requires a [Google AI Studio](https://aistudio.google.com/) API key for
 - **No Persistence** - Clear localStorage to remove all data instantly
 - **Open Source** - Full source code visible and auditable
 
+
+## How It Works
+
+The Credit Repair tool automates the dispute letter process:
+
+1. **Import** your credit report (PDF or manual entry)
+2. **Analyze** — identifies negative items, errors, and dispute opportunities
+3. **Generate** — creates formatted dispute letters tailored to each item
+4. **Track** — monitors dispute timelines and responses
+
+All data stays local. Nothing leaves your machine.
+
+## Installation
+
+```bash
+git clone https://github.com/VrtxOmega/veritas_credit_repair.git
+cd veritas_credit_repair
+# Open index.html in any browser — no build step required
+```
+
 ## License
 
 MIT
